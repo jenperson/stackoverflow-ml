@@ -1,12 +1,12 @@
 
 var csv = require("fast-csv");
 var fs = require("fs");
-var stream = fs.createReadStream("android_date_yes_no_order.csv");
-var stream2 = fs.createReadStream("android_date_no_order.csv");
+var stream = fs.createReadStream("android_no_id_yes.csv");
+var stream2 = fs.createReadStream("android_no_id_no.csv");
 
 
-var csvStream = csv.createWriteStream({headers: false});
-writableStream = fs.createWriteStream("android_date_combined-3.csv");
+var csvStream = csv.createWriteStream({headers: false, quoteColumns: true});
+writableStream = fs.createWriteStream("android_combined_nocode_1.csv");
 writableStream.on("finish", function(){
   console.log("DONE!");
 });
@@ -30,6 +30,9 @@ csv.fromStream(stream)
  function createArray(data) {
   let body = data[0].toLowerCase();
   let label = data[1];
+  if (label === "") {
+    return;
+  }
   let newString = "";
   // check if there's code
   if (body.includes("<code>")) {
@@ -501,7 +504,8 @@ csv.fromStream(stream)
     newString += ` ${count}before`;
   }
   let noHTML = removeHTML(body);
-  let newRow = [noHTML + " " + newString + " " + day, label]; 
+  const parsedString = noHTML + " " + newString;
+  let newRow = [parsedString, label]; 
   return newRow;
  }
 
@@ -522,6 +526,7 @@ csv.fromStream(stream)
   return length;
  }
 
+ // removes code from question so as not to confuse model
  function removeCode(body) {
   let index = 0;
   let nocode = "";
@@ -531,9 +536,8 @@ csv.fromStream(stream)
       return nocode;
     }
     const end = body.indexOf("</code>", start+1);
-    nocode += body.substring(index, start-1);
-    print(nocode);
-    index = end;
+    nocode += body.substring(index, start+1);
+    index = end+6;
   }
   return nocode;
  }
@@ -554,5 +558,7 @@ csv.fromStream(stream)
  }
 
  function removeHTML(body) {
-  return body.replace(/<[^>]*>?/g, '');
+  let result = "";
+  result += body.replace(/<[^>]*>?/g, '')
+  return result;
  }

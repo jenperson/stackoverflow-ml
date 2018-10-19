@@ -1,11 +1,12 @@
 import * as functions from 'firebase-functions';
 const automl = require('@google-cloud/automl');
+const predictionClient = new automl.PredictionServiceClient();
 //const fs = require(`fs`);
 //const client = new automl.AutoMlClient();
 const client = new automl.v1beta1.PredictionServiceClient();
-const projectId = "automl-and-firebase"
-const computeRegion = "us-central1";
-const modelId = functions.config().automl.modelid;
+const project = "automl-and-firebase"
+const region = "us-central1";
+const automl_model = "TCN5948718394658568591";
 
 export const stackoverflow = {
   manual: functions.https.onRequest(async (req, res) => {
@@ -538,24 +539,9 @@ async function scanQuestion(text: string, date: Date) {
    }
 
 
-
 // here's where check to ML will go
 async function checkML(text: String) {
-    // Create client for prediction service.
-
-    /**
-     * TODO(developer): Uncomment the following line before running the sample.
-     */
-    // const projectId = `The GCLOUD_PROJECT string, e.g. "my-gcloud-project"`;
-    // const computeRegion = `region-name, e.g. "us-central1"`;
-    // const modelId = `id of the model, e.g. “ICN12345”`;
-    // const filePath = `local text file path of content to be classified, e.g. "./resources/test.txt"`;
-  
-    // Get the full path of the model.
-    const modelFullId = client.modelPath(projectId, computeRegion, modelId);
-  
-    // Read the file content for prediction.
-    //const snippet = fs.readFileSync(filePath, `utf8`);
+  return new Promise((resolve, reject) => {
     const snippet = text;
     // Set the payload by giving the content and type of the file.
     const payload = {
@@ -564,21 +550,19 @@ async function checkML(text: String) {
         mimeType: `text/plain`,
       },
     };
+      const reqBody = {
+          name: predictionClient.modelPath(project, region, automl_model),
+          payload: payload
+      }
+      predictionClient.predict(reqBody)
+          .then(responses => {
+              console.log('Got a prediction from AutoML API!', JSON.stringify(responses));
+              resolve(responses);
+          })
+          .catch(err => {
+              console.log('AutoML API Error: ',err);
+              reject(err);
+          });
+  });
   
-    // Params is additional domain-specific parameters.
-    // Currently there is no additional parameters supported.
-    return client
-      .predict({name: modelFullId, payload: payload, params: {}})
-      .then(responses => {
-        console.log(`Prediction results:`);
-        responses[0].payload.forEach(result => {
-          console.log(`Predicted class name: ${result.displayName}`);
-          console.log(`Predicted class score: ${result.classification.score}`);
-          return result;
-        });
-      })
-      .catch(err => {
-        console.error(err);
-        return err;
-      });
 }
