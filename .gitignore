@@ -36,6 +36,7 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
+backend/functions/node_modules
 
 # TypeScript v1 declaration files
 typings/
@@ -74,3 +75,7 @@ typings/
 .serverless
 
 *.DS_Store
+
+test/*.csv
+test/node_modules
+web_app/node_modules
