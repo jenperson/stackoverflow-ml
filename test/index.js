@@ -29,15 +29,13 @@ csv.fromStream(stream)
 
  function createArray(data) {
   let body = data[0].toLowerCase();
-  let date = data[1];
-  let label = data[2];
+  let label = data[1];
   let newString = "";
-  date = new Date(date);
-  const day = date.getDay() + "day " + date.getUTCHours() + "time";
   // check if there's code
   if (body.includes("<code>")) {
     const length = findCodeLength(body);
     newString += ` ${length}code`;
+    body = removeCode(body);
   }
   // log number of question marks
   newString += ` ?${(body.split("?").length - 1)}`;
@@ -522,6 +520,22 @@ csv.fromStream(stream)
     index = end;
   }
   return length;
+ }
+
+ function removeCode(body) {
+  let index = 0;
+  let nocode = "";
+  while (index !== -1) {
+    const start = body.indexOf("<code>", index+1);
+    if (start === -1) {
+      return nocode;
+    }
+    const end = body.indexOf("</code>", start+1);
+    nocode += body.substring(index, start-1);
+    print(nocode);
+    index = end;
+  }
+  return nocode;
  }
 
  function countOccurance(body, value) {
