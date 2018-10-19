@@ -1,0 +1,63 @@
+{
+  "name": "vue-test",
+  "description": "A Vue.js project",
+  "version": "1.0.0",
+  "author": "Abraham Haskins <abeisgreat@abeisgreat.com>",
+  "private": true,
+  "scripts": {
+    "fmt": "prettier --write *.js *.json  src/**/**.ts src/components/**/**.ts  src/**.ts test/**/**.ts test/**/**.js *.js",
+    "dev": "concurrently -k --names 'FIREBASE,WEBPACK' 'firebase serve' 'cross-env NODE_ENV=development webpack-dev-server --hot'",
+    "bundle": "npm run fmt && npm run cli update-package && cp package.json dist/ && npm run build:app && npm run build:sw",
+    "build:app": "cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "build:sw": "tsc --out dist/sw.js src/service_workers/sw.ts --lib es2017,webworker",
+    "test": "npm run fmt && jest test --no-cache || true",
+    "cli": "tsc src/cli/bin.ts --lib es2017,dom --outDir dist/cli && node ./dist/cli/bin $3",
+    "deploy": "npm run bundle && firebase deploy --only hosting"
+  },
+  "dependencies": {
+    "firebase": "^4.5.0",
+    "html-loader": "^0.5.1",
+    "isomorphic-fetch": "^2.2.1",
+    "sass-loader": "^6.0.6",
+    "vue": "^2.3.3",
+    "vue-router": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.0.3",
+    "@types/core-js": "^0.9.42",
+    "@types/mocha": "^2.2.41",
+    "@types/node": "^8.0.22",
+    "chai": "^4.1.1",
+    "concurrently": "^3.6.0",
+    "cross-env": "^3.0.0",
+    "css-loader": "^0.25.0",
+    "file-loader": "^0.9.0",
+    "firebase-tools": "^3.19.0",
+    "jest": "^20.0.4",
+    "jest-vue-preprocessor": "^1.1.0",
+    "node-sass": "^4.5.3",
+    "postcss-loader": "^2.0.6",
+    "postcss-sass": "^0.2.0",
+    "prettier": "^1.5.3",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.18.2",
+    "ts-loader": "^2.3.2",
+    "vue-template-compiler": "^2.4.2",
+    "vue-template-compiler-loader": "^1.0.4",
+    "vue-template-loader": "^0.3.1",
+    "webpack": "^2.6.1",
+    "webpack-dev-server": "^2.4.5"
+  },
+  "jest": {
+    "testRegex": "spec.ts$",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.js$": "<rootDir>/node_modules/babel-jest",
+      "^.+\\.html": "<rootDir>/test/__pre__/template",
+      "^.+\\.(ts|tsx)$": "<rootDir>/test/__pre__/typescript"
+    }
+  }
+}

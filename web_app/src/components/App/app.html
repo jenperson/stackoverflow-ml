@@ -1,0 +1,19 @@
+  <div id="app">
+    <img src="../../assets/logo.png">
+    <h1>{{ msg }}</h1>
+    <router-link to="/boilerplate">
+      <boilerplate></boilerplate>
+    </router-link>
+    <form>
+      Question:<br>
+      <input type="text" name="firstname"><br>
+    </form>
+    <button @click="check_question()">Check Question</button>
+    <h2>Visits</h2>
+    <ul>
+      <li v-for="visit in visits">
+        Someone visited at {{visit.created_at}}
+      </li>
+    </ul>
+    <button @click="add_visit()">Add Visit</button>
+  </div>
