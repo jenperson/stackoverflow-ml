@@ -37,11 +37,9 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
   window.onload = onWindowLoad;
 $('#call-model').on('click', (e) => {
     //let text = $('#question').val();
-    //let text = $('#message').val();
     let text = message.innerText;
     text = encodeURI(text);
-    message.innerText = text;
-
+    message.innerText = "";
     bkg.console.log(`Sending question ${text} to model...`);
     let url = `https://us-central1-automl-and-firebase.cloudfunctions.net/stackoverflow-manual?text=${text}`;
     $('#status').text('Sending to model...');
