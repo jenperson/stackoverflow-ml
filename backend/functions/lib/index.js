@@ -21,7 +21,9 @@ exports.stackoverflow = {
     manual: functions.https.onRequest((req, res) => __awaiter(this, void 0, void 0, function* () {
         // curl URL/stackoverflow/manual?text="blah blah"
         const date = new Date();
-        const result = yield scanQuestion(req.query.text, date);
+        const text = decodeURI(req.query.text);
+        console.log(text);
+        const result = yield scanQuestion(text, date);
         res.send(result);
     })),
     automatic: {
@@ -429,6 +431,7 @@ function scanQuestion(text, date) {
         }
         const noHTML = removeHTML(body);
         newString = noHTML + " " + newString + " " + day;
+        console.log(newString);
         return yield checkML(newString);
     });
 }
