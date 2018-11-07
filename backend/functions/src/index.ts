@@ -12,7 +12,9 @@ export const stackoverflow = {
   manual: functions.https.onRequest(async (req, res) => {
     // curl URL/stackoverflow/manual?text="blah blah"
     const date = new Date();
-    const result = await scanQuestion(req.query.text, date);
+    const text = decodeURI(req.query.text);
+    console.log(text);
+    const result = await scanQuestion(text, date);
     res.send(result);
   }),
   automatic: {
@@ -499,6 +501,7 @@ async function scanQuestion(text: string, date: Date) {
     }
     const noHTML = removeHTML(body);
     newString = noHTML + " " + newString + " " + day; 
+    console.log(newString);
     return await checkML(newString);
   }
   
