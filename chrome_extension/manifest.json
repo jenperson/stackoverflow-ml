@@ -20,6 +20,8 @@
   },
   "permissions": [
     "clipboardRead",
-    "https://us-central1-automl-and-firebase.cloudfunctions.net/*"
+    "https://us-central1-automl-and-firebase.cloudfunctions.net/*",
+    "tabs",
+    "<all_urls>"
   ]
 }
