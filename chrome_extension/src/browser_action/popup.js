@@ -41,10 +41,14 @@ $('#call-model').on('click', (e) => {
     text = encodeURI(text);
     message.innerText = "";
     bkg.console.log(`Sending question ${text} to model...`);
-    let url = `https://us-central1-automl-and-firebase.cloudfunctions.net/stackoverflow-manual?text=${text}`;
+    let url = `https://us-central1-automl-and-firebase.cloudfunctions.net/stackoverflow-manual`;
+   // ?text=${text}`;
+    let data = {
+      text: text
+    };
     $('#status').text('Sending to model...');
-    $.post(url, (data) => {
-        let displayText = parseClassification(data);
+    $.post(url, data, (res) => {
+        let displayText = parseClassification(res);
         $('#status').text('');
         $('#result').text(displayText);
     });

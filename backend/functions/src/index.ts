@@ -1,18 +1,22 @@
 import * as functions from 'firebase-functions';
 const automl = require('@google-cloud/automl');
 const predictionClient = new automl.PredictionServiceClient();
-//const fs = require(`fs`);
-//const client = new automl.AutoMlClient();
-const client = new automl.v1beta1.PredictionServiceClient();
+const express = require('express');
+const app = express();
+//const client = new automl.v1beta1.PredictionServiceClient();
 const project = "automl-and-firebase"
 const region = "us-central1";
 const automl_model = "TCN5948718394658568591";
 
 export const stackoverflow = {
-  manual: functions.https.onRequest(async (req, res) => {
+  manual: app.post(async (req, res) => {
     // curl URL/stackoverflow/manual?text="blah blah"
-    const date = new Date();
-    const text = decodeURI(req.query.text);
+    const text = decodeURI(req.body.text);
+    let date = req.body.date;
+    if (!date) {
+      date = new Date();
+    }
+   // const text = (req.query.text);
     console.log(text);
     const result = await scanQuestion(text, date);
     res.send(result);
@@ -26,6 +30,11 @@ export const stackoverflow = {
       })
   }
 };
+
+app.use(stackoverflow.manual);
+
+// Expose the API as a function
+exports.api = functions.https.onRequest(app);
 
 async function scanQuestion(text: string, date: Date) {
     const body = text.toLowerCase();
