@@ -45,7 +45,7 @@ $('#call-model').on('click', (e) => {
    // ?text=${text}`;
     let data = {
       text: text
-    };
+    }
     $('#status').text('Sending to model...');
     $.post(url, data, (res) => {
         let displayText = parseClassification(res);

@@ -10,13 +10,11 @@ const automl_model = "TCN5948718394658568591";
 
 export const stackoverflow = {
   manual: app.post(async (req, res) => {
-    // curl URL/stackoverflow/manual?text="blah blah"
     const text = decodeURI(req.body.text);
     let date = req.body.date;
     if (!date) {
       date = new Date();
     }
-   // const text = (req.query.text);
     console.log(text);
     const result = await scanQuestion(text, date);
     res.send(result);
