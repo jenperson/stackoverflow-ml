@@ -41,7 +41,7 @@ $('#call-model').on('click', (e) => {
     text = encodeURI(text);
     message.innerText = "";
     bkg.console.log(`Sending question ${text} to model...`);
-    let url = `https://us-central1-automl-and-firebase.cloudfunctions.net/stackoverflow-manual`;
+    let url = 'https://us-central1-automl-and-firebase.cloudfunctions.net/stackoverflow-manual/';
    // ?text=${text}`;
     let data = {
       text: text
