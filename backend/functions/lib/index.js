@@ -11,21 +11,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const functions = require("firebase-functions");
 const automl = require('@google-cloud/automl');
 const predictionClient = new automl.PredictionServiceClient();
-//const fs = require(`fs`);
-//const client = new automl.AutoMlClient();
-const client = new automl.v1beta1.PredictionServiceClient();
+const express = require('express');
+const app = express();
+//const client = new automl.v1beta1.PredictionServiceClient();
 const project = "automl-and-firebase";
 const region = "us-central1";
 const automl_model = "TCN5948718394658568591";
+app.post("/", (req, res) => __awaiter(this, void 0, void 0, function* () {
+    console.log(req.body);
+    const text = decodeURI(req.body.text);
+    let date = req.body.date;
+    if (!date) {
+        date = new Date();
+    }
+    console.log(text);
+    const result = yield scanQuestion(text, date);
+    res.send(result);
+}));
 exports.stackoverflow = {
-    manual: functions.https.onRequest((req, res) => __awaiter(this, void 0, void 0, function* () {
-        // curl URL/stackoverflow/manual?text="blah blah"
-        const date = new Date();
-        const text = decodeURI(req.query.text);
-        console.log(text);
-        const result = yield scanQuestion(text, date);
-        res.send(result);
-    })),
+    manual: functions.https.onRequest(app),
     automatic: {
         ask_question: functions.firestore.document("questions/{questionId}").onCreate((snap, context) => __awaiter(this, void 0, void 0, function* () {
             const { text } = snap.data();
@@ -35,6 +39,9 @@ exports.stackoverflow = {
         }))
     }
 };
+//app.use(stackoverflow.manual);
+// Expose the API as a function
+//exports.api = functions.https.onRequest(app);
 function scanQuestion(text, date) {
     return __awaiter(this, void 0, void 0, function* () {
         const body = text.toLowerCase();
