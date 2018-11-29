@@ -2,6 +2,7 @@ const bkg = chrome.extension.getBackgroundPage();
 
 let parseClassification = (response) => {
     let classifications = response[0].payload;
+    let label_arr = [];
     let displayStr = ``;
 
     for (let i in classifications) {
@@ -9,8 +10,19 @@ let parseClassification = (response) => {
         bkg.console.log(data); // Logs to background.html
         let label = data.displayName;
         let score_pct = data.classification.score * 100;
-        displayStr += `${label}: ${score_pct.toFixed(1)}%\n`;
+        label_arr.push([label, score_pct]);
     }
+
+    // Sort the list of labels by confidence
+    label_arr.sort((a, b) => {
+      return b[1] - a[1];
+    });
+    let top_5 = label_arr.slice(0,5);
+    
+    for (let i in top_5) {
+      displayStr += `<strong>${top_5[i][0]}</strong>: ${Math.round(top_5[i][1] * 100) / 100}%<br/>`;
+    }
+    bkg.console.log(displayStr);
     return displayStr;
 }
 chrome.runtime.onMessage.addListener(function(request, sender) {
@@ -50,6 +62,6 @@ $('#call-model').on('click', (e) => {
     $.post(url, data, (res) => {
         let displayText = parseClassification(res);
         $('#status').text('');
-        $('#result').text(displayText);
+        $('#result').html(displayText);
     });
 });
