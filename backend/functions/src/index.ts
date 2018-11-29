@@ -3,20 +3,16 @@ const automl = require('@google-cloud/automl');
 const predictionClient = new automl.PredictionServiceClient();
 const express = require('express');
 const app = express();
-//const client = new automl.v1beta1.PredictionServiceClient();
 const project = "automl-and-firebase"
 const region = "us-central1";
-const automl_model = "TCN5948718394658568591";
+const automl_model = "TCN702761633239699922";
+
 
 app.post("/", async (req, res) => {
   console.log(req.body);
   const text = decodeURI(req.body.text);
-  let date = req.body.date;
-  if (!date) {
-    date = new Date();
-  }
   console.log(text);
-  const result = await scanQuestion(text, date);
+  const result = await checkML(text);
   res.send(result);
 })
 
@@ -32,10 +28,6 @@ export const stackoverflow = {
   }
 };
 
-//app.use(stackoverflow.manual);
-
-// Expose the API as a function
-//exports.api = functions.https.onRequest(app);
 
 async function scanQuestion(text: string, date: Date) {
     const body = text.toLowerCase();

@@ -16,16 +16,12 @@ const app = express();
 //const client = new automl.v1beta1.PredictionServiceClient();
 const project = "automl-and-firebase";
 const region = "us-central1";
-const automl_model = "TCN5948718394658568591";
+const automl_model = "TCN702761633239699922";
 app.post("/", (req, res) => __awaiter(this, void 0, void 0, function* () {
     console.log(req.body);
     const text = decodeURI(req.body.text);
-    let date = req.body.date;
-    if (!date) {
-        date = new Date();
-    }
     console.log(text);
-    const result = yield scanQuestion(text, date);
+    const result = yield checkML(text);
     res.send(result);
 }));
 exports.stackoverflow = {
@@ -39,9 +35,6 @@ exports.stackoverflow = {
         }))
     }
 };
-//app.use(stackoverflow.manual);
-// Expose the API as a function
-//exports.api = functions.https.onRequest(app);
 function scanQuestion(text, date) {
     return __awaiter(this, void 0, void 0, function* () {
         const body = text.toLowerCase();
