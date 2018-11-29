@@ -3,10 +3,9 @@ const automl = require('@google-cloud/automl');
 const predictionClient = new automl.PredictionServiceClient();
 const express = require('express');
 const app = express();
-//const client = new automl.v1beta1.PredictionServiceClient();
 const project = "automl-and-firebase"
 const region = "us-central1";
-const automl_model = "TCN6398547649885757031";
+const automl_model = "TCN702761633239699922";
 
 
 app.post("/", async (req, res) => {

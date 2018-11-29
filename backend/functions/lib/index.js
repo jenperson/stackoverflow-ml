@@ -16,7 +16,7 @@ const app = express();
 //const client = new automl.v1beta1.PredictionServiceClient();
 const project = "automl-and-firebase";
 const region = "us-central1";
-const automl_model = "TCN6398547649885757031";
+const automl_model = "TCN702761633239699922";
 app.post("/", (req, res) => __awaiter(this, void 0, void 0, function* () {
     console.log(req.body);
     const text = decodeURI(req.body.text);
