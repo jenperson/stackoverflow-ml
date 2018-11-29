@@ -5,7 +5,7 @@ const express = require('express');
 const app = express();
 const project = "automl-and-firebase"
 const region = "us-central1";
-const automl_model = "TCN702761633239699922";
+const automl_model = "TCN6006523832861593722";
 
 
 app.post("/", async (req, res) => {
