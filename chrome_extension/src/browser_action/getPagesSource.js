@@ -1,5 +1,5 @@
 function DOMtoString(document_root) {
-  var html = 'groo';
+  let html;
   // pull content of question
   // question in progress
   if(window.location.href.indexOf("questions/ask") > -1) {
