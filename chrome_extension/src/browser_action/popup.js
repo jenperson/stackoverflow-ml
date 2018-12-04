@@ -47,10 +47,10 @@ let parseClassification = (response) => {
     let top_5 = label_arr.slice(0,5);
     
     for (let i in top_5) {
-      displayStr += `<strong>${top_5[i][0]}</strong>: ${Math.round(top_5[i][1] * 100) / 100}%<br/>`;
+      let confidence_pct = Math.round(top_5[i][1] * 100) / 100;
+      displayStr += `<span class="tag"><strong>${top_5[i][0]}</strong>: ${confidence_pct}%<span><div id="${top_5[i][0]}" class="progress-outer"><div class="progress-inner"></div></div>`;
     }
-    bkg.console.log(displayStr);
-    return displayStr;
+    return [displayStr, top_5];
 }
 chrome.runtime.onMessage.addListener(function(request, sender) {
     if (request.action == "getSource") {
@@ -60,14 +60,14 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
   
   function onWindowLoad() {
   
-    var message = document.querySelector('#message');
+    var message = document.querySelector('#mainPopup');
   
     chrome.tabs.executeScript(null, {
       file: "src/browser_action/getPagesSource.js"
     }, function() {
       // If you try and inject into an extensions page or the webstore/NTP you'll get an error
       if (chrome.runtime.lastError) {
-        message.innerText = 'There was an error injecting script : \n' + chrome.runtime.lastError.message;
+        message.innerHTML = '<p>Navigate to a <a href="https://stackoverflow.com">Stack Overflow</a> question to use this extension';
       }
     });
   
@@ -84,11 +84,20 @@ $('#call-model').on('click', (e) => {
       text: text
     }
     $('#status').text('Sending to model...');
+    let top_tags = [];
     $.post(url, data, (res) => {
         addTabs(res);
-        let displayText = parseClassification(res);
+        let modelResp = parseClassification(res);
+        let displayText = modelResp[0];
+        top_tags = modelResp[1];
         $('#status').text('');
+        bkg.console.log('hey1');
         $('#result').html(displayText);
-        
+    }).then(() => {
+      for (let i in top_tags) {
+        let tag_name = top_tags[i][0];
+        let pct = top_tags[i][1];
+        $('#' + tag_name + ' .progress-inner').css('width', pct + '%');
+      }
     });
 });
