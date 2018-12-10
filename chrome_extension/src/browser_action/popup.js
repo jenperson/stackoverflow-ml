@@ -1,6 +1,7 @@
 const bkg = chrome.extension.getBackgroundPage();
 let label;
 
+
 let addTabs = (response) => {
   let classifications = response[0].payload;
   console.log("addtabs")
@@ -13,6 +14,7 @@ let addTabs = (response) => {
       let score_pct = data.classification.score * 100;
       if (score_pct > 1) {
         var selector = {label: label};
+        
         chrome.tabs.executeScript({
           code: '(' + function(params) {
             document.querySelector('.tag-editor.s-input').insertAdjacentHTML('afterbegin',
